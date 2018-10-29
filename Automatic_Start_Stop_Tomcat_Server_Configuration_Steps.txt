@@ -1,0 +1,71 @@
+####### Steps for creating Tomcat Server automatically start/stop in linux. ################
+
+1. Create a file in linux having any name.
+
+2. Copy the below content.
+
+Content:-
+# Tomcat auto-start
+# chkconfig: 2345 99 99
+# description: Auto-starts jenkinTomcat
+# processname: jenkinTomcat
+# pidfile: /var/run/jenkinTomcat.pid
+
+##export JAVA_HOME="/usr/java/jdk1.6.0_45"
+
+ERROR=0
+echo $1
+case "$1" in
+start)
+    echo $"Starting Jenkin Tomcat"
+	sh /usr/share/apache-tomcat-7.0.72_2/bin/startup.sh
+    ;;
+stop) 
+	 echo $"Stopping Jenkin Tomcat"
+	sh /usr/share/apache-tomcat-7.0.72_2/bin/shutdown.sh
+	;;
+restart)
+   	sh /usr/share/apache-tomcat-7.0.72_2/bin/shutdown.sh
+   	sh /usr/share/apache-tomcat-7.0.72_2/bin/startup.sh
+    ;;
+*)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+	;;
+	
+    esac   
+    exit 0
+
+exit $ERROR
+
+
+3. open the file in vi editor in linux.
+
+4. a) If file has some other content then flush it first by using,
+   command  :- :1,$d 
+   and then, press 'i' to enter in insert mode and paste the copied content in the file by click right button on mouse. After then press esc button to come back in command mode and 
+   enter :qw  and then press enter to save file with content.
+   
+   b) If file is already empty then, press 'i' to enter in insert mode and paste the copied content in the file by click right button on mouse. After then press esc button to come back in command mode and enter :qw  and then press enter to save file with content.
+   
+5. After then place the file in /etc/init.d/ path.
+
+6. Make the file executable and available for users by using command,
+   i.e., sudo chmod 755 filename
+   
+7. Filter the CR-LF because you copied the dos content and wants to execute in unix environment. By using command,
+   i.e., perl -pi -e 's/\r\n/\n/g' filename
+   
+8. Link the file for automatically startup folder by using command,
+   i.e., sudo ln -s /etc/init.d/filename /etc/rc2.d/S99filename
+   
+9. Link the file for automatically stop folder by using command,
+   i.e., sudo ln -s /etc/init.d/tomcat /etc/rc1.d/K99tomcat
+   
+10. Make the server as daemon process, by using following commands
+    i.e., cd /etc/init.d/
+	      chkconfig -add filename(service name)
+		  chkconfig filename on
+		  
+11. Here you go, The Service is now registered and now server start/stop running automatically.
+
